@@ -18,6 +18,8 @@ on:
         description: 'SSH connection to Actions'
         required: false
         default: 'false'
+  schedule:
+    - cron: 0 8 * * 5
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -30,7 +32,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
-  UPLOAD_RELEASE: false
+  UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
 
 jobs:
@@ -174,11 +176,11 @@ jobs:
         body_path: release.txt
         files: ${{ env.FIRMWARE }}/*
 
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
+    - name: Remove old Artifacts
+      uses: c-hive/gha-remove-artifacts@v1.2.0
       with:
-        retain_days: 1
-        keep_minimum_runs: 3
+        age: '1 day'
+        skip-recent: 3
 
     - name: Remove old Releases
       uses: dev-drprasad/delete-older-releases@v0.1.0
